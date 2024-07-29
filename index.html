@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Demostración de Bloqueo Síncrono</title>
+    <style>
+        button { margin: 10px; padding: 10px; }
+        #status { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Demostración de Bloqueo Síncrono vs Asíncrono</h1>
+    <button id="syncButton">Ejecutar Tarea Síncrona</button>
+    <button id="asyncButton">Ejecutar Tarea Asíncrona</button>
+    <button id="animationButton">Animar</button>
+    <div id="status"></div>
+    <div id="animation" style="width: 50px; height: 50px; background-color: red; position: relative;"></div>
+
+    <script>
+        const statusDiv = document.getElementById('status');
+        const animationDiv = document.getElementById('animation');
+        let animationId;
+
+        function updateStatus(message) {
+            statusDiv.textContent = message;
+        }
+
+        function simulateHeavyTask() {
+            const startTime = Date.now();
+            while (Date.now() - startTime < 5000) {
+                // Simula una tarea pesada que tarda 5 segundos
+            }
+        }
+
+        async function simulateAsyncTask() {
+            return new Promise(resolve => setTimeout(resolve, 5000));
+        }
+
+        document.getElementById('syncButton').addEventListener('click', () => {
+            updateStatus('Iniciando tarea síncrona...');
+            simulateHeavyTask();
+            updateStatus('Tarea síncrona completada');
+        });
+
+        document.getElementById('asyncButton').addEventListener('click', async () => {
+            updateStatus('Iniciando tarea asíncrona...');
+            await simulateAsyncTask();
+            updateStatus('Tarea asíncrona completada');
+        });
+
+        document.getElementById('animationButton').addEventListener('click', () => {
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+                animationId = null;
+                animationDiv.style.left = '0px';
+            } else {
+                function animate() {
+                    const currentLeft = parseInt(animationDiv.style.left || '0');
+                    animationDiv.style.left = `${(currentLeft + 1) % 300}px`;
+                    animationId = requestAnimationFrame(animate);
+                }
+                animate();
+            }
+        });
+    </script>
+</body>
+</html>
